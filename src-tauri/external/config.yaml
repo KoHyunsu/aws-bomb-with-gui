@@ -5,4 +5,4 @@ regions:
 account-blocklist: 
 - "999999999999" 
 accounts: 
-  "00000000": {} 
+  "000000000000": {} 

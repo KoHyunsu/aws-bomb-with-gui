@@ -16,12 +16,14 @@
 ## 개발환경
 ```(shell)
 cd aws-bomb-with-gui
+npm install
 cargo tauri dev
 ```
 
 ## 배포환경
 ```(shell)
 cd aws-bomb-with-gui
+npm install
 cargo tauri build
 ```
 빌드가 완료되면 /target/bundle 경로 내에 완성된 프로그램이 저장됩니다.
