@@ -1,5 +1,4 @@
 'use client';
-import Image from 'next/image'
 import { Command } from '@tauri-apps/api/shell'
 import { useEffect, useState } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -8,6 +7,7 @@ import { readTextFile, writeTextFile } from '@tauri-apps/api/fs'
 import YAML from 'yaml'
 import './page.module.css'
 import regionList from '../utils/regions.json'
+import { ListAccountAliasesCommand, CreateAccountAliasCommand, IAMClient } from "@aws-sdk/client-iam";
 
 export default function Home() {
   const [accountId, setAccountId] = useState('')
@@ -62,6 +62,23 @@ export default function Home() {
 
   const cmd = async () => {
       setBombStatus('pending')
+
+      const iam = new IAMClient({
+        credentials: {
+          accessKeyId: accessKeyId,
+          secretAccessKey: secretAccessKey
+        },
+        region: 'us-east-1', // region
+      });
+      const listAccountAliasesCommand = new ListAccountAliasesCommand({ MaxItems: 5 });
+      const aliases = await iam.send(listAccountAliasesCommand);
+      if (aliases.AccountAliases?.length == 0) {
+        const createAccountAliasCommand = new CreateAccountAliasCommand({
+          AccountAlias: Math.random().toString(36).slice(2),
+        });
+        await iam.send(createAccountAliasCommand);
+      }
+
       const path = await import('@tauri-apps/api/path');
       const resourcePath = await path.resolveResource('external/config.yaml')
       const command = Command.sidecar('external/aws-nuke', [
